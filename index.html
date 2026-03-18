@@ -158,7 +158,6 @@
       flex-direction: column;
       gap: 8px;
       opacity: 0;
-      animation: contentIn 0.65s ease 1.8s both;
     }
 
     @keyframes contentIn {
@@ -166,22 +165,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* stagger children */
-    .wrapper > * {
-      opacity: 0;
-      animation: itemIn 0.4s ease both;
-    }
-    .wrapper > *:nth-child(1)  { animation-delay: 1.90s; }
-    .wrapper > *:nth-child(2)  { animation-delay: 1.97s; }
-    .wrapper > *:nth-child(3)  { animation-delay: 2.04s; }
-    .wrapper > *:nth-child(4)  { animation-delay: 2.11s; }
-    .wrapper > *:nth-child(5)  { animation-delay: 2.18s; }
-    .wrapper > *:nth-child(6)  { animation-delay: 2.25s; }
-    .wrapper > *:nth-child(7)  { animation-delay: 2.32s; }
-    .wrapper > *:nth-child(8)  { animation-delay: 2.39s; }
-    .wrapper > *:nth-child(9)  { animation-delay: 2.46s; }
-    .wrapper > *:nth-child(10) { animation-delay: 2.53s; }
-    .wrapper > *:nth-child(11) { animation-delay: 2.60s; }
+    /* stagger applied dynamically via JS after gate click */
 
     @keyframes itemIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -697,11 +681,6 @@
   <div id="gate-hint">Click to enter</div>
 </div>
 
-<!-- INTRO SPLASH -->
-<div id="intro">
-  <div class="intro-logo" id="intro-logo">loading<span class="tld">...</span></div>
-</div>
-
 <!-- PARTICLES -->
 <canvas id="particles"></canvas>
 
@@ -712,15 +691,21 @@
 /* ── Gate: Click to enter ── */
 document.getElementById('gate').addEventListener('click', function() {
   this.classList.add('hide');
-  const intro = document.getElementById('intro');
-  intro.style.display = 'flex';
-  // trigger reflow so animation fires
-  intro.offsetHeight;
-  intro.classList.add('active');
-  // show wrapper after intro fades
+
+  // Skip intro — show content immediately
+  const wrapper = document.querySelector('.wrapper');
+  wrapper.style.animation = 'none';
+  wrapper.style.opacity = '1';
+  // still stagger children nicely but fast
+  Array.from(wrapper.children).forEach((child, i) => {
+    child.style.animation = `itemIn 0.35s ease ${i * 0.06}s both`;
+  });
+
+  // Autoplay first track
   setTimeout(() => {
-    document.querySelector('.wrapper').style.animationPlayState = 'running';
-  }, 1700);
+    const audio = document.querySelector('audio') || window._playerAudio;
+    if (window._playerPlay) window._playerPlay();
+  }, 200);
 });
 
 /* ================================================================
@@ -1030,7 +1015,7 @@ const PLAYLIST = [
     title: "ss",
     artist: "Ken Carson",
     src: "music1.mp3",        // ← Datei neben index.html ablegen
-    cover: "pfp1.png"         // ← Coverbild neben index.html ablegen
+    cover: "pfp1.jpg"         // ← Coverbild neben index.html ablegen
   },
   {
     title: "Song 2",
@@ -1155,6 +1140,14 @@ const PLAYLIST = [
   });
 
   audio.volume = parseFloat(volSlider.value);
+
+  // expose play fn for gate
+  window._playerPlay = () => {
+    if (PLAYLIST[current].src) {
+      audio.play().catch(() => {});
+      setPlaying(true);
+    }
+  };
 
   // init
   loadTrack(current);
