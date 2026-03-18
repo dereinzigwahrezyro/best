@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>zyro.best</title>
+  <title>zyro .best</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
@@ -33,9 +33,11 @@
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 22px; cursor: pointer;
     }
-    #gate-logo { font-size: clamp(2.8rem,10vw,5.5rem); font-weight: 900; letter-spacing: -0.045em; color: #fff; user-select: none; }
+    #gate-logo { font-size: clamp(2.8rem,10vw,5.5rem); font-weight: 900; letter-spacing: -0.045em; color: #fff; user-select: none; animation: gateLogoIn 0.9s cubic-bezier(0.16,1,0.3,1) both; }
     #gate-logo .tld { color: var(--accent); text-shadow: 0 0 20px rgba(240,168,24,0.65), 0 0 60px rgba(240,168,24,0.32), 0 0 120px rgba(240,168,24,0.15); animation: glowPulse 3s ease-in-out infinite; }
-    #gate-hint { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.4); letter-spacing: 0.18em; text-transform: uppercase; animation: hintPulse 2s ease-in-out infinite; user-select: none; }
+    #gate-hint { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.4); letter-spacing: 0.18em; text-transform: uppercase; animation: hintFadeIn 0.7s ease 1s both, hintPulse 2s ease-in-out 1.7s infinite; user-select: none; }
+    @keyframes gateLogoIn { 0%{opacity:0;transform:scale(0.8) translateY(20px)} 60%{opacity:1;transform:scale(1.04) translateY(-3px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+    @keyframes hintFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:0.4;transform:translateY(0)} }
     @keyframes hintPulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
     /* CANVAS */
     #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
