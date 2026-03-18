@@ -166,6 +166,7 @@
     }
 
     /* stagger applied dynamically via JS after gate click */
+    .wrapper > * { opacity: 0; }
 
     @keyframes itemIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -692,20 +693,18 @@
 document.getElementById('gate').addEventListener('click', function() {
   this.classList.add('hide');
 
-  // Skip intro — show content immediately
+  // Show wrapper immediately, stagger children in
   const wrapper = document.querySelector('.wrapper');
-  wrapper.style.animation = 'none';
   wrapper.style.opacity = '1';
-  // still stagger children nicely but fast
   Array.from(wrapper.children).forEach((child, i) => {
-    child.style.animation = `itemIn 0.35s ease ${i * 0.06}s both`;
+    child.style.opacity = '0';
+    child.style.animation = `itemIn 0.35s ease ${i * 0.07}s both`;
   });
 
   // Autoplay first track
   setTimeout(() => {
-    const audio = document.querySelector('audio') || window._playerAudio;
     if (window._playerPlay) window._playerPlay();
-  }, 200);
+  }, 300);
 });
 
 /* ================================================================
@@ -1081,9 +1080,11 @@ const PLAYLIST = [
     timeDur.textContent = '0:00';
   }
 
+  const playIconPath = playIcon.querySelector('path') || playIcon;
+
   function setPlaying(val) {
     isPlaying = val;
-    playIcon.setAttribute('d', val ? PAUSE_PATH : PLAY_PATH);
+    playIconPath.setAttribute('d', val ? PAUSE_PATH : PLAY_PATH);
     if (val) {
       art.classList.add('spinning');
     } else {
